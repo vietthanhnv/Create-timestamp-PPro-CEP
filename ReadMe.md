@@ -1,125 +1,113 @@
-# Premiere Pro panels
+# Create Timestamp - Adobe Premiere Pro CEP Extension
 
-*Last updated February 2023, to coincide with the  Premiere Pro 23.2 release, also known as "Premiere Pro 2023".*
+A powerful Adobe Premiere Pro CEP extension that automatically generates timestamps from audio clips in your timeline. Perfect for creating chapter markers, podcast timestamps, or any content that needs time-based navigation.
 
-## Create panels for Premiere Pro
+## Features
 
-### 1. Obtain and install these
+- **Multiple Format Options**: Choose from predefined formats or create your own custom pattern
+- **Custom Format Builder**: Use placeholders to create personalized timestamp formats
+- **One-Click Generation**: Automatically scans your audio track and generates timestamps
+- **Copy to Clipboard**: Easy copying of all generated timestamps at once
+- **Clean Interface**: Dark theme that matches Premiere Pro's UI
 
-- [Creative Cloud](http://creative.adobe.com). Use the Creative Cloud
-    application to install Premiere Pro CC and other Adobe applications with
-    which you'll be developing and testing, as well as ExtendScript Toolkit
-    (available under 'previous versions').
+## Supported Formats
 
-- The [CEP Test
-    Panel](https://github.com/Adobe-CEP/CEP-Resources/tree/master/CEP_11.x/Samples/CEP_HTML_Test_Extension-10.0)
-    shows the full capabilities of CEP panels.
+### Predefined Formats
+1. **Track Format**: `Track 1: clipname 1 (02:02)`
+2. **Simple Format**: `02:02 clipname 1`
 
-- The [PProPanel](https://github.com/Adobe-CEP/Samples/tree/master/PProPanel)
-    sample project is exhaustive in its exercise of Premiere Pro's ExtendScript
-    API. If you're reading this, you likely already _have_ the PProPanel sample.
-    
-- [Microsoft Visual Studio Code](https://visualstudio.microsoft.com/vs/), and the [ExtendScript debugging extension](https://marketplace.visualstudio.com/items?itemName=Adobe.extendscript-debug). This extension running in VSCode is Adobe's recommended ExtendScript development environment. Sorry, ExtendScript Toolkit; you had a good long run.
+### Custom Format
+Create your own format using these placeholders:
+- `{index}` - The track/clip number (1, 2, 3...)
+- `{name}` - The clip name (without file extension)
+- `{time}` - The formatted timestamp (MM:SS)
 
-*Note: Creative Cloud Desktop handles >95% of all extension installation cases, and the Adobe Exchange Store can take your extension's directory as an input, and generate a .zxp file for you. However, it is often desirable to be able to test deployment on a local system, so we're still including links to the following stand-alone tools.*
+#### Custom Format Examples
+- `"Chapter {index}: {name} - {time}"` → `"Chapter 1: My Clip - 02:30"`
+- `"{time} | {name}"` → `"02:30 | My Clip"`
+- `"[{index}] {name} ({time})"` → `"[1] My Clip (02:30)"`
+- `"{name} starts at {time}"` → `"My Clip starts at 02:30"`
 
-- Use the [UPIA](https://helpx.adobe.com/creative-cloud/help/working-from-the-command-line.html) command line
-    utility to test .zxp installation.
+## Installation
 
-- The
-    [ZXPSignCmd](https://github.com/Adobe-CEP/CEP-Resources/tree/master/ZXPSignCMD)
-    signing utility creates signed .zxp bundles for Add-Ons or direct
-    distribution.
+### Method 1: Manual Installation
 
-### 2. Enable loading of unsigned panels
+1. **Enable unsigned panels** (required for development/testing):
 
-Further [relevant information](https://medium.com/adobetech/how-to-create-your-first-adobe-panel-in-6-easy-steps-f8bd4ed5778) is available from the Extensibility team.
+   **Windows**: Create this registry entry:
+   ```
+   Key: HKEY_CURRENT_USER/Software/Adobe/CSXS.11
+   Name: PlayerDebugMode
+   Type: String
+   Value: 1
+   ```
 
-*Note: Premiere Pro 23.x integrates CEP11, so even if you had unsigned panels
-loading before (up to CEP10), you'll need to perform this step again, but for key CSXS.11.*
+   **macOS**: Run in Terminal:
+   ```bash
+   defaults write /Users/<username>/Library/Preferences/com.adobe.CSXS.11.plist PlayerDebugMode 1
+   ```
 
-On MacOS, type the following into Terminal, then relaunch Finder (either via
-rebooting, or from the Force Quit dialog):
+2. **Copy extension folder** to:
+   ```
+   Windows: C:\Program Files (x86)\Common Files\Adobe\CEP\extensions\
+   Mac: /Library/Application Support/Adobe/CEP/extensions/
+   ```
 
-```html
-defaults write /Users/<username>/Library/Preferences/com.adobe.CSXS.11.plist PlayerDebugMode 1
+3. **Restart Premiere Pro**
+
+4. **Access the panel**: Go to `Window > Extensions > Create Timestamp`
+
+## Usage
+
+1. **Open your project** in Adobe Premiere Pro
+2. **Add audio clips** to the first audio track (A1)
+3. **Open the extension** from `Window > Extensions > Create Timestamp`
+4. **Select your format**:
+   - Choose a predefined format, or
+   - Select "Custom Format" and enter your pattern
+5. **Click "Create Timestamp"** to generate timestamps
+6. **Copy results** using the "Copy All" button
+
+## Requirements
+
+- Adobe Premiere Pro 2023 or later
+- Audio clips placed on the first audio track (A1)
+- CEP 11 support
+
+## Development
+
+This extension is built using:
+- **CEP (Common Extensibility Platform)** for the panel interface
+- **ExtendScript** for Premiere Pro integration
+- **HTML/CSS/JavaScript** for the user interface
+
+### Project Structure
+```
+Create Timestamp/
+├── index.html          # Main panel interface
+├── js/main.js          # Panel JavaScript logic
+├── jsx/hostscript.jsx  # ExtendScript for Premiere Pro integration
+├── css/style.css       # Panel styling
+├── CSXS/manifest.xml   # Extension manifest
+└── lib/                # CEP libraries
 ```
 
-On Windows, make the following registry entry (a new Key, of type String):
+## Contributing
 
-![Registry image](payloads/Registry.png)
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-### 3. Put panel into extensions directory
+## License
 
-Put `/PProPanel` or your own panel's containing directory here, to have Premiere
-Pro load it:
+This project is open source and available under the [MIT License](LICENSE).
 
-```html
-Windows:    C:\Program Files (x86)\Common Files\Adobe\CEP\extensions
+## Support
 
-Mac:        /Library/Application Support/Adobe/CEP/extensions
-```
+If you encounter any issues or have suggestions for improvements, please [open an issue](https://github.com/vietthanhnv/Create-timestamp-PPro-CEP/issues) on GitHub.
 
-*Note: That's the root /Library, not a specific user's ~/Library...*
-### 4. Write and test your panel's JavaScript using a JavaScript debugger
+---
 
-Use Microsoft Visual Studio Code to debug your panel's JavaScript.
-
-Optional diagnostics: Turn on CEP logging. Find CEP logs (distinct from Premiere
-Pro's logs) here. Note that Mac Library path is the system's library, not the
-user's. Also, note that logging WILL impact performance.
-
-```html
-Windows:    %\AppData\Local\Temp\csxs11-PPRO.log
-Mac:        /Library/Logs/CSXS/csxs11-PPRO.log
-```
-
-Set logging level in Windows Registry (see above), or MacOS X .plist:
-
-```html
-defaults write /Users/<username>/Library/Preferences/com.adobe.CSXS.11.plist LogLevel 6
-```
-
-## 5. Create your panel's ExtendScript using Microsoft Visual Studio Code
-
-Once you've installed the ExtendScript debugging extension, you can set breakpoints in your ExtendScript code within VSCode. 
-
-
-Here's a [screen video](https://shared-assets.adobe.com/link/8c35be84-22fb-40fa-7715-b3fd94f474a6)
-showing how to debug panels at both the JavaScript and ExtendScript levels.
-
-## 6. Package and deploy your panel
-
-Further [relevant information](https://github.com/Adobe-CEP/Getting-Started-guides/tree/master/Package%20Distribute%20Install) is available from the Extensibility team.
-
-### Scenario 1 : The common case
-
-For extensions deployed exclusively via Creative Cloud Desktop, submitting your extension to the Adobe Exchange Store is all you need to do; the Store will generate a cross-platform .zxp file with which your extension can be installed, and Creative Cloud Desktop will take care of extension configuration management, across your Creative Cloud systems.
-
-### Scenario 2 : Enabling other installation methods
-
-You can either generate a self-signed certificate (ZXPSignCmd will make them for you), or get one from a commercial security provider. Here's an example:
-
-```bash
-./ZXPSignCmd -selfSignedCert US California Adobe "Bruce Bullis" TotallySecurePassword certificate.p12
-```
-
-To sign directory `/PanelDir` with `certificate.p12`, do the following:
-
-```bash
-./ZXPSignCmd -sign panelDir/ PanelName.zxp certificate.p12 password -tsa http://timestamp.digicert.com/
-```
-
-Submit your panel to the [Adobe Add-Ons
-site](https://www.adobeexchange.com/producer) for approval, and distribution.
-You can also directly supply the .zxp file enterprise customers, and those who
-do not connect their systems to the public internet, for installation using
-[UPIA](https://helpx.adobe.com/creative-cloud/help/working-from-the-command-line.html), the command line version
-of Extension Manager.
-
-If you encounter any issues with the Add-Ons store or ExManCmd, please [contact
-the Add-Ons team](mailto:avetting@adobe.com).
-
-## Previous Updates
-
-*Note: As we work toward providing UXP-based extensibility, we've stopped additional work on the ExtendScript API.*
+**Made with ❤️ for the Premiere Pro community**
