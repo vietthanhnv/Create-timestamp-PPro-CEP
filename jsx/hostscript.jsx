@@ -1,4 +1,4 @@
-function getChapters(format, customPattern) {
+function getChapters(format, customPattern, cleanNumbers) {
     var project = app.project;
     var sequence = project.activeSequence;
     var chapters = [];
@@ -17,6 +17,13 @@ function getChapters(format, customPattern) {
             var clip = audioTrack1.clips[i];
             if (clip && clip.projectItem) {
                 var clipName = clip.projectItem.name.replace(/\.[^\.]+$/, '');
+                
+                // Clean numerical suffixes if option is enabled
+                if (cleanNumbers) {
+                    // Remove patterns like " (1)", " (2)", etc. at the end of the name
+                    clipName = clipName.replace(/\s*\(\d+\)$/, '');
+                }
+                
                 var startTime = clip.start.seconds;
                 
                 var minutes = Math.floor(startTime / 60);
