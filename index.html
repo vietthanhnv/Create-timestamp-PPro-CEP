@@ -18,7 +18,22 @@
     
     <div id="custom-format-container" style="display: none; margin: 10px 0; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
         <label for="custom-format">Custom Format Pattern:</label>
-        <input type="text" id="custom-format" placeholder="e.g., Chapter {index}: {name} - {time}" style="width: 100%; margin: 5px 0;">
+        <div style="display: flex; gap: 5px; margin: 5px 0;">
+            <input type="text" id="custom-format" placeholder="e.g., Chapter {index}: {name} - {time}" style="flex: 1;">
+            <button type="button" id="save-format-btn" style="padding: 5px 10px; font-size: 12px;">Save</button>
+        </div>
+        
+        <div id="saved-formats-container" style="margin-top: 10px;">
+            <label for="saved-formats">Saved Formats:</label>
+            <select id="saved-formats" style="width: 100%; margin: 5px 0;">
+                <option value="">-- Select a saved format --</option>
+            </select>
+            <div style="display: flex; gap: 5px; margin-top: 5px;">
+                <button type="button" id="load-format-btn" style="padding: 5px 10px; font-size: 12px; flex: 1;">Load</button>
+                <button type="button" id="delete-format-btn" style="padding: 5px 10px; font-size: 12px; flex: 1;">Delete</button>
+            </div>
+        </div>
+        
         <div class="help-text">
             Available placeholders: {index}, {name}, {time}<br>
             Example: "Chapter {index}: {name} - {time}" → "Chapter 1: My Clip - 02:30"
