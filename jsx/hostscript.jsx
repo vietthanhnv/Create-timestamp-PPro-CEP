@@ -1,4 +1,4 @@
-function getChapters(format, customPattern, cleanNumbers) {
+function getChapters(format, customPattern, cleanNumbers, removeTrackNumbers) {
     var project = app.project;
     var sequence = project.activeSequence;
     var chapters = [];
@@ -17,6 +17,12 @@ function getChapters(format, customPattern, cleanNumbers) {
             var clip = audioTrack1.clips[i];
             if (clip && clip.projectItem) {
                 var clipName = clip.projectItem.name.replace(/\.[^\.]+$/, '');
+                
+                // Remove track numbers from beginning if option is enabled
+                if (removeTrackNumbers) {
+                    // Remove patterns like "01 - ", "02 - ", "1. ", "2. ", etc. at the beginning
+                    clipName = clipName.replace(/^\d+[\s\-\.]+/, '');
+                }
                 
                 // Clean numerical suffixes if option is enabled
                 if (cleanNumbers) {

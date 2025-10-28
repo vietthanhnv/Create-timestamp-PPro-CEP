@@ -64,6 +64,7 @@ document.getElementById('create-btn').addEventListener('click', function() {
     var format = document.getElementById('format-select').value;
     var customPattern = '';
     var cleanNumbers = document.getElementById('clean-numbers').checked;
+    var removeTrackNumbers = document.getElementById('remove-track-numbers').checked;
     
     if (format === 'custom') {
         customPattern = document.getElementById('custom-format').value;
@@ -74,8 +75,8 @@ document.getElementById('create-btn').addEventListener('click', function() {
     }
     
     var scriptCall = format === 'custom' 
-        ? 'getChapters("' + format + '", "' + customPattern.replace(/"/g, '\\"') + '", ' + cleanNumbers + ')'
-        : 'getChapters(' + format + ', "", ' + cleanNumbers + ')';
+        ? 'getChapters("' + format + '", "' + customPattern.replace(/"/g, '\\"') + '", ' + cleanNumbers + ', ' + removeTrackNumbers + ')'
+        : 'getChapters(' + format + ', "", ' + cleanNumbers + ', ' + removeTrackNumbers + ')';
     
     csInterface.evalScript(scriptCall, function(result) {
         console.log("Raw result:", result);
