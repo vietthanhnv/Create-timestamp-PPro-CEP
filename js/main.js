@@ -65,6 +65,7 @@ document.getElementById('create-btn').addEventListener('click', function() {
     var customPattern = '';
     var cleanNumbers = document.getElementById('clean-numbers').checked;
     var removeTrackNumbers = document.getElementById('remove-track-numbers').checked;
+    var soleTrackMode = document.getElementById('sole-track-mode').checked;
     
     if (format === 'custom') {
         customPattern = document.getElementById('custom-format').value;
@@ -75,8 +76,8 @@ document.getElementById('create-btn').addEventListener('click', function() {
     }
     
     var scriptCall = format === 'custom' 
-        ? 'getChapters("' + format + '", "' + customPattern.replace(/"/g, '\\"') + '", ' + cleanNumbers + ', ' + removeTrackNumbers + ')'
-        : 'getChapters(' + format + ', "", ' + cleanNumbers + ', ' + removeTrackNumbers + ')';
+        ? 'getChapters("' + format + '", "' + customPattern.replace(/"/g, '\\"') + '", ' + cleanNumbers + ', ' + removeTrackNumbers + ', ' + soleTrackMode + ')'
+        : 'getChapters(' + format + ', "", ' + cleanNumbers + ', ' + removeTrackNumbers + ', ' + soleTrackMode + ')';
     
     csInterface.evalScript(scriptCall, function(result) {
         console.log("Raw result:", result);
