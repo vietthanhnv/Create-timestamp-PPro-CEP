@@ -23,7 +23,7 @@ document.getElementById('save-format-btn').addEventListener('click', function() 
         alert('Please enter a format pattern to save');
         return;
     }
-    
+
     var formatName = prompt('Enter a name for this format:', '');
     if (formatName && formatName.trim()) {
         saveCustomFormat(formatName.trim(), formatPattern);
@@ -60,13 +60,38 @@ document.getElementById('delete-format-btn').addEventListener('click', function(
     }
 });
 
+// Show/hide loop options
+document.getElementById('loop-playlist').addEventListener('change', function() {
+    document.getElementById('loop-options').style.display = this.checked ? 'block' : 'none';
+});
+
+// Enable/disable custom text input based on radio selection
+document.querySelectorAll('input[name="loop-text-option"]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+        var customInput = document.getElementById('loop-custom-text');
+        customInput.disabled = this.value !== 'custom';
+        if (this.value !== 'custom') customInput.value = '';
+    });
+});
+
 document.getElementById('create-btn').addEventListener('click', function() {
     var format = document.getElementById('format-select').value;
     var customPattern = '';
     var cleanNumbers = document.getElementById('clean-numbers').checked;
     var removeTrackNumbers = document.getElementById('remove-track-numbers').checked;
     var soleTrackMode = document.getElementById('sole-track-mode').checked;
-    
+    var loopPlaylist = document.getElementById('loop-playlist').checked;
+
+    var loopText = 'Loop Playlist';
+    if (loopPlaylist) {
+        var selectedOption = document.querySelector('input[name="loop-text-option"]:checked').value;
+        if (selectedOption === 'custom') {
+            loopText = document.getElementById('loop-custom-text').value.trim() || 'Loop Playlist';
+        } else {
+            loopText = selectedOption;
+        }
+    }
+
     if (format === 'custom') {
         customPattern = document.getElementById('custom-format').value;
         if (!customPattern.trim()) {
@@ -74,11 +99,11 @@ document.getElementById('create-btn').addEventListener('click', function() {
             return;
         }
     }
-    
-    var scriptCall = format === 'custom' 
-        ? 'getChapters("' + format + '", "' + customPattern.replace(/"/g, '\\"') + '", ' + cleanNumbers + ', ' + removeTrackNumbers + ', ' + soleTrackMode + ')'
-        : 'getChapters(' + format + ', "", ' + cleanNumbers + ', ' + removeTrackNumbers + ', ' + soleTrackMode + ')';
-    
+
+    var scriptCall = format === 'custom'
+        ? 'getChapters("' + format + '", "' + customPattern.replace(/"/g, '\\"') + '", ' + cleanNumbers + ', ' + removeTrackNumbers + ', ' + soleTrackMode + ', ' + loopPlaylist + ', "' + loopText.replace(/"/g, '\\"') + '")'
+        : 'getChapters(' + format + ', "", ' + cleanNumbers + ', ' + removeTrackNumbers + ', ' + soleTrackMode + ', ' + loopPlaylist + ', "' + loopText.replace(/"/g, '\\"') + '")';
+
     csInterface.evalScript(scriptCall, function(result) {
         console.log("Raw result:", result);
         var chapters = result.split("|||");
@@ -157,10 +182,10 @@ function deleteCustomFormat(name) {
 function loadSavedFormats() {
     var savedFormats = getSavedFormats();
     var select = document.getElementById('saved-formats');
-    
+
     // Clear existing options except the first one
     select.innerHTML = '<option value="">-- Select a saved format --</option>';
-    
+
     // Add saved formats to dropdown
     for (var name in savedFormats) {
         if (savedFormats.hasOwnProperty(name)) {

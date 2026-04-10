@@ -1,4 +1,4 @@
-function getChapters(format, customPattern, cleanNumbers, removeTrackNumbers, soleTrackMode) {
+function getChapters(format, customPattern, cleanNumbers, removeTrackNumbers, soleTrackMode, loopPlaylist, loopText) {
     var project = app.project;
     var sequence = project.activeSequence;
     var chapters = [];
@@ -11,7 +11,7 @@ function getChapters(format, customPattern, cleanNumbers, removeTrackNumbers, so
 
     if (sequence && sequence.audioTracks.numTracks > 0) {
         var tracksToScan = [];
-        
+
         if (soleTrackMode && sequence.audioTracks.numTracks >= 2) {
             // Sole track mode: scan both track 1 and 2
             tracksToScan.push(sequence.audioTracks[0]);
@@ -22,14 +22,14 @@ function getChapters(format, customPattern, cleanNumbers, removeTrackNumbers, so
             tracksToScan.push(sequence.audioTracks[0]);
             debugInfo += "Scanning audio track 1 only\n";
         }
-        
+
         // Collect all clips from selected tracks with their start times
         var allClips = [];
-        
+
         for (var trackIndex = 0; trackIndex < tracksToScan.length; trackIndex++) {
             var audioTrack = tracksToScan[trackIndex];
             debugInfo += "Track " + (trackIndex + 1) + " clips: " + audioTrack.clips.numItems + "\n";
-            
+
             for (var i = 0; i < audioTrack.clips.numItems; i++) {
                 var clip = audioTrack.clips[i];
                 if (clip && clip.projectItem) {
@@ -41,42 +41,44 @@ function getChapters(format, customPattern, cleanNumbers, removeTrackNumbers, so
                 }
             }
         }
-        
+
         // Sort clips by start time to get chronological order
         allClips.sort(function(a, b) {
             return a.startTime - b.startTime;
         });
-        
+
         // Process sorted clips
         for (var j = 0; j < allClips.length; j++) {
             var clipData = allClips[j];
             var clip = clipData.clip;
             var clipName = clip.projectItem.name.replace(/\.[^\.]+$/, '');
-            
+
             // Remove track numbers from beginning if option is enabled
             if (removeTrackNumbers) {
                 // Remove patterns like "01 - ", "02 - ", "1. ", "2. ", etc. at the beginning
                 clipName = clipName.replace(/^\d+[\s\-\.]+/, '');
             }
-            
+
             // Clean numerical suffixes if option is enabled
             if (cleanNumbers) {
                 // Remove patterns like " (1)", " (2)", etc. at the end of the name
                 clipName = clipName.replace(/\s*\(\d+\)$/, '');
             }
-            
+
             var startTime = clipData.startTime;
-            
+
             var minutes = Math.floor(startTime / 60);
             var seconds = Math.floor(startTime % 60);
             var formattedTime = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-            
+
             var chapterText = "";
-            
+
             if (format == 1) {
                 chapterText = "Track " + trackCount + ": " + clipName + " (" + formattedTime + ")";
             } else if (format == 2) {
-                chapterText = formattedTime + " " + clipName;
+                chapterText = formattedTime + " - " + clipName;
+            } else if (format == 3) {
+                chapterText = formattedTime + " \u2022 " + clipName;
             } else if (format === "custom" && customPattern) {
                 // Replace placeholders in custom pattern
                 chapterText = customPattern
@@ -84,11 +86,37 @@ function getChapters(format, customPattern, cleanNumbers, removeTrackNumbers, so
                     .replace(/\{name\}/g, clipName)
                     .replace(/\{time\}/g, formattedTime);
             } else {
-                chapterText = formattedTime + " " + clipName; // fallback
+                chapterText = formattedTime + " - " + clipName; // fallback
             }
-            
+
             chapters.push(chapterText);
             trackCount++;
+        }
+
+        // Add loop timestamp at end of sequence if enabled
+        if (loopPlaylist) {
+            var lastClipData = allClips[allClips.length - 1];
+            var endSeconds = lastClipData.clip.end.seconds;
+            var endMinutes = Math.floor(endSeconds / 60);
+            var endSecs = Math.floor(endSeconds % 60);
+            var endTime = endMinutes + ":" + (endSecs < 10 ? "0" : "") + endSecs;
+
+            var loopChapterText = "";
+            if (format == 1) {
+                loopChapterText = "Track " + trackCount + ": " + loopText + " (" + endTime + ")";
+            } else if (format == 2) {
+                loopChapterText = endTime + " - " + loopText;
+            } else if (format == 3) {
+                loopChapterText = endTime + " \u2022 " + loopText;
+            } else if (format === "custom" && customPattern) {
+                loopChapterText = customPattern
+                    .replace(/\{index\}/g, trackCount)
+                    .replace(/\{name\}/g, loopText)
+                    .replace(/\{time\}/g, endTime);
+            } else {
+                loopChapterText = endTime + " - " + loopText;
+            }
+            chapters.push(loopChapterText);
         }
     }
 

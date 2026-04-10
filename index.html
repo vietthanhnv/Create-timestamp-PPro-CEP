@@ -11,18 +11,19 @@
         <label for="format-select">Select Format:</label>
         <select id="format-select">
             <option value="1">Track 1: clipname 1 (02:02)</option>
-            <option value="2">02:02 clipname 1</option>
+            <option value="2">02:02 - clipname 1</option>
+            <option value="3">02:02 • clipname 1</option>
             <option value="custom">Custom Format</option>
         </select>
     </div>
-    
+
     <div id="custom-format-container" style="display: none; margin: 10px 0; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
         <label for="custom-format">Custom Format Pattern:</label>
         <div style="display: flex; gap: 5px; margin: 5px 0;">
             <input type="text" id="custom-format" placeholder="e.g., Chapter {index}: {name} - {time}" style="flex: 1;">
             <button type="button" id="save-format-btn" style="padding: 5px 10px; font-size: 12px;">Save</button>
         </div>
-        
+
         <div id="saved-formats-container" style="margin-top: 10px;">
             <label for="saved-formats">Saved Formats:</label>
             <select id="saved-formats" style="width: 100%; margin: 5px 0;">
@@ -33,34 +34,53 @@
                 <button type="button" id="delete-format-btn" style="padding: 5px 10px; font-size: 12px; flex: 1;">Delete</button>
             </div>
         </div>
-        
+
         <div class="help-text">
             Available placeholders: {index}, {name}, {time}<br>
             Example: "Chapter {index}: {name} - {time}" → "Chapter 1: My Clip - 02:30"
         </div>
     </div>
-    
+
     <div style="margin: 10px 0;">
         <label>
-            <input type="checkbox" id="clean-numbers" checked> 
+            <input type="checkbox" id="clean-numbers" checked>
             Clean numerical suffixes from clip names (e.g., "Song (1)" → "Song")
         </label>
     </div>
-    
+
     <div style="margin: 10px 0;">
         <label>
-            <input type="checkbox" id="remove-track-numbers" checked> 
+            <input type="checkbox" id="remove-track-numbers" checked>
             Remove track numbers from beginning of song names (e.g., "02 - Song Title" → "Song Title")
         </label>
     </div>
-    
+
     <div style="margin: 10px 0;">
         <label>
-            <input type="checkbox" id="sole-track-mode" checked> 
+            <input type="checkbox" id="sole-track-mode" checked>
             Use sole track mode (scan both audio track 1 and 2)
         </label>
     </div>
-    
+
+    <div style="margin: 10px 0;">
+        <label>
+            <input type="checkbox" id="loop-playlist">
+            Add Loop Playlist timestamp at end of video
+        </label>
+        <div id="loop-options" style="display: none; margin-left: 20px; margin-top: 6px; padding: 8px; border: 1px solid #555; border-radius: 4px;">
+            <label style="display: block; margin: 4px 0;">
+                <input type="radio" name="loop-text-option" value="Loop Playlist" checked> Loop Playlist
+            </label>
+            <label style="display: block; margin: 4px 0;">
+                <input type="radio" name="loop-text-option" value="Loop Album"> Loop Album
+            </label>
+            <label style="display: block; margin: 4px 0;">
+                <input type="radio" name="loop-text-option" value="custom"> Custom:
+                <input type="text" id="loop-custom-text" placeholder="Enter custom text..." style="margin-left: 5px; width: 140px;" disabled>
+            </label>
+        </div>
+    </div>
+
     <button id="create-btn">Create Timestamp</button>
     <div id="result-container">
         <table id="result-table"></table>
